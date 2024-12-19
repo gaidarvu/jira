@@ -1,0 +1,37 @@
+services:
+  web_jira:
+    image: atlassian/jira-software
+    hostname: "jira"
+    container_name: "jira"
+    restart: always
+    networks:
+      backend:
+        ipv4_address: 172.20.0.30
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - ./jiraVolume:/var/atlassian/application-data/jira
+    ports:
+      - "8080:8080" 
+  db:
+    image: postgres:latest
+    hostname: "pgsql-14"
+    container_name: "pgsql-14"
+    restart: always
+    networks:
+      backend:
+        ipv4_address: 172.20.0.20
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: jira
+      POSTGRES_USER: posgtres
+      POSTGRES_PASSWORD: example
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+networks:
+  backend:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.20.0.0/24
